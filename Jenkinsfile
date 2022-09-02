@@ -1,16 +1,38 @@
 pipeline {
     agent none
     stages {
-        stage ('stage-1') {
-            agent { label 'jenkins-agent-1' }
-            steps {
-                echo "Hello stage-1"
+
+        stage ('parallel') {
+            parallel {
+                stage ('thread-1') {
+                    agent { label 'jenkins-agent-1' }
+                    steps {
+                        echo "parallel, thread-1"
+                    }
+                }
+                stage ('thread-2') {
+                    agent { label 'jenkins-agent-2' }
+                    steps {
+                        echo "parallel, thread-2"
+                    }
+                }
+                stage ('thread-3') {
+                    agent { label 'jenkins-agent-3' }
+                    steps {
+                        echo "parallel, thread-3"
+                    }
+                }
             }
         }
-        stage ('stage-2') {
-            agent { label 'jenkins-agent-2' }
+
+        stage ('execute_scripts') {
+            agent { label 'jenkins-agent-1' }
             steps {
-                echo "Hello stage-2"
+                sh 'uname -a'
+
+                timeout(time: 3, unit: 'SECONDS') {
+                    sh './script.sh'
+                }
             }
         }
     }
