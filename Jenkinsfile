@@ -1,5 +1,10 @@
 pipeline {
     agent none
+
+    environment {
+        MY_ENV_VAR = 'hello world'
+    }
+
     stages {
 
         stage ('parallel') {
@@ -25,11 +30,21 @@ pipeline {
             }
         }
 
+        stage ('when') {
+            agent { label 'jenkins-agent-3' }
+            when {
+                environment(name: "MY_ENV_VAR", value: "hello world")
+            }
+
+            steps {
+                echo "${MY_ENV_VAR}"
+                sh 'printenv'
+            }
+        }
+
         stage ('execute_scripts') {
             agent { label 'jenkins-agent-1' }
             steps {
-                sh 'uname -a'
-
                 timeout(time: 3, unit: 'SECONDS') {
                     sh './script.sh'
                 }
