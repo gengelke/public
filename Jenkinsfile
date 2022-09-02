@@ -35,5 +35,12 @@ pipeline {
                 }
             }
         }
+
+        stage ('do_something_in_addition') {
+            agent { label 'jenkins-agent-2' }
+            steps {
+                sh 'sudo apt update'
+            }
+        }
     }
 }
