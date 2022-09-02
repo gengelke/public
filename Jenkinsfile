@@ -45,8 +45,10 @@ pipeline {
         stage ('execute_scripts') {
             agent { label 'jenkins-agent-1' }
             steps {
-                timeout(time: 3, unit: 'SECONDS') {
-                    sh './script.sh'
+                catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED') {
+                    timeout(time: 3, unit: 'SECONDS') {
+                        sh './script.sh'
+                    }
                 }
             }
         }
